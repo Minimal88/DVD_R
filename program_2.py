@@ -80,14 +80,14 @@ while True:
 					print("> File 'readme.txt' exists!")
 				
 ##Check 'write' folder doesn't exists
-			#write_folder = str(os.popen("ls "+ dvd_mnt_path ).read().strip()) 				
-			##if "write" in write_folder:
-			##	print("> 'Write' folder exists in DVD, can't burn!")				
-			##else:				
-			##	if debug:	
-			print("> Starting burning process...")			
+			write_folder = str(os.popen("ls "+ dvd_mnt_path ).read().strip()) 				
+			if "write" in write_folder:
+				print("> 'Write' folder exists in DVD, can't burn!")				
+			else:				
+				if debug:	
+					print("> Starting burning process...")			
 				#Initiate burning process				
-			os.system("growisofs -M /dev/sr0 " + folder_path  + " -speed=2")
+				os.system("growisofs -M /dev/sr0 " + folder_path  + " -speed=2")
 
 	if dvd_detected&dvd_scanned:
 		dvd_detected=False
