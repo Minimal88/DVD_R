@@ -16,14 +16,17 @@ dvd_mnt_path = "/media/" + username + "/CDROM"
 ## Configurable by the User ##
 folder_path = "/home/"+username+"/DVD_files"
 write_file_name = "filename.txt"
-debug = True;			#To print debugging define true
-time_delay = 60 			# Every seconds the script is executed
+DEBUG = True;	##To print DEBUGging define true
+TIME_DELAY = 1 ##Every seconds the script is executed
+NUM_ATT = 10 ## Number of attemps to burn DVD-R
 ##############################
 
 dvd_detected = False
 dvd_scanned = False
+attempts = 0
 print("\n> Waiting for DVD...\n")
-while True:
+
+while attempts<NUM_ATT:
 ##Check if the folder path exists
 	if (os.path.isdir(folder_path)==False):
 		print("> Folder path doesn't exists!")
@@ -38,7 +41,7 @@ while True:
 	
 ##Check if the folders write_file_name exists
 	if (os.path.isfile(folder_path+"/write/"+write_file_name)==False):
-		if debug:	
+		if DEBUG:	
 			print("> File '" + write_file_name + "' doesn't exists!")
 			print("> Creating '" + write_file_name + "' file...")
 		f = open(folder_path+"/write/"+write_file_name,"w+")
@@ -57,36 +60,35 @@ while True:
 		dvd_detected=True
 		dvd_scanned = True
 		time.sleep(5)
-		if debug:	
+		if DEBUG:	
 			print("> DVD-R detected!")
 
 
 ##Verify DVD is blank
 		dvd_status = str(os.popen("dvd+rw-mediainfo /dev/sr0").read().strip())
 		if "Disc status:           blank" in dvd_status:
-			if debug:	
+			if DEBUG:	
 				print("> DVD is blank!")			
 				print("> Ejecting DVD...")
 			os.system("eject /dev/sr0")		
 
 		elif "Disc status:           blank" not in dvd_status:
-			if debug:	
+			if DEBUG:	
 				print("> DVD is not blank!")
 
 ##Check that readme.txt exists in 'read'
 			read_file = str(os.popen("ls "+ dvd_mnt_path + "/read").read().strip()) 
 			if read_file=="readme.txt":
-				if debug:	
+				if DEBUG:	
 					print("> File 'readme.txt' exists!")
 				
 ##Check 'write' folder doesn't exists
-			#write_folder = str(os.popen("ls "+ dvd_mnt_path ).read().strip()) 				
-			##if "write" in write_folder:
-			##	print("> 'Write' folder exists in DVD, can't burn!")				
-			##else:				
-			##	if debug:	
-			print("> Starting burning process...")			
-				#Initiate burning process				
+			write_folder = str(os.popen("ls "+ dvd_mnt_path ).read().strip()) 				
+			if "write" not in write_folder:	# Remove this if always burn
+				if DEBUG:
+					#print("> 'Write' folder doesn't exists!")				
+					print("> Starting burning process...")			
+			#Initiate burning process				
 			os.system("growisofs -M /dev/sr0 " + folder_path  + " -speed=2")
 
 	if dvd_detected&dvd_scanned:
@@ -94,6 +96,9 @@ while True:
 		dvd_scanned = False
 		print("\n> Waiting for DVD...\n")
 
-##Check for a DVD ever 1 second
-	time.sleep(time_delay)
+##Check for a DVD every 1 second
+	time.sleep(TIME_DELAY)
+	attempts=attempts+1
+	print("Attempt: " + str(attempts))
+
 				

@@ -24,3 +24,27 @@ folder_path = "/home/"+username+"/DVD_files"
 # "debug", variable in True, enables print in console (for debugging)
 # "time_delay", variable defines the seconds between executions of the script
 
+
+## ADDED: program_2_cron.py
+# executes the same loginc in program_2.py but a limited attempts (configurable)
+# add this to your crontab -e
+* * * * * python /path_file/program_2_cron.py & echo 'runned'>> /home/esteban-dev/Documents/DVD_R/cron_runnings.txt
+
+## Configurable by user program_2_cron.py
+# number of attemps variable-> "NUM_ATT"
+
+## Run monitorig with sh
+# grand acces with chmdo +x program_2_cron.py 
+./monitoring.sh program_2_cron.py 
+
+## Run the cpu memory monitoring
+./monitoring.sh program_2_cron.py
+
+## Fiter data
+./Filtering.sh
+
+## Plot cpu and memeory
+./usage-plot.gp cpu.dat cpu.png
+
+
+
